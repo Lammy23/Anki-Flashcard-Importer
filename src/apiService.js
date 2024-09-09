@@ -42,6 +42,7 @@ function createModel(fileContent) {
 
   let currentCard = null;
   let frontInProgress = null;
+  let backInProgress = null;
 
   for (let line of lines) {
     line = line.trim();
@@ -97,7 +98,10 @@ function createModel(fileContent) {
 }
 
 function createDeck(fileContent, modelName, inOrderFields, parentDeck) {
-    const deckName = `${parentDeck}::${modelName}`;
+  var deckName = modelName;
+  if (parentDeck) {
+    deckName = `${parentDeck}::${modelName}`;
+  }
   invoke("createDeck", VERSION, { deck: deckName });
   const result = [];
   var lines = fileContent.split("\n");
@@ -106,7 +110,7 @@ function createDeck(fileContent, modelName, inOrderFields, parentDeck) {
     return !(line[0] === "#") && line.length > 0;
   });
 
-  console.log("lines", lines)
+  console.log("lines", lines);
 
   lines = lines.map((line) => {
     var newLine = line.trim();

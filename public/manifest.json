@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "AnkiImporter",
+  "name": "Anki Importer",
   "icons": [
     {
       "src": "favicon.ico",

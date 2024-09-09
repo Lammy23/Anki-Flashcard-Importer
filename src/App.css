@@ -1,5 +1,4 @@
 /* src/App.css */
-
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -9,7 +8,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: #f0f2f5;
 }
-
 .app {
   padding: 20px;
   max-width: 800px;
@@ -18,7 +16,6 @@ body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
 }
-
 .column {
   display: flex;
   align-items: center;
@@ -26,7 +23,6 @@ body {
   flex-direction: column;
   margin-bottom: 20px;
 }
-
 .row {
   display: flex;
   align-items: center;
@@ -34,7 +30,6 @@ body {
   flex-direction: row;
   margin-bottom: 20px;
 }
-
 textarea, input {
   width: 100%;
   padding: 10px;
@@ -43,12 +38,10 @@ textarea, input {
   border-radius: 4px;
   font-size: 16px;
 }
-
 textarea:focus, input:focus {
   border-color: #007bff;
   outline: none;
 }
-
 button {
   padding: 10px 20px;
   font-size: 16px;
@@ -59,23 +52,37 @@ button {
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
-
 button:hover {
   background-color: #0056b3;
 }
-
+.upload-button {
+  padding: 15px 30px;
+  font-size: 18px;
+  background-color: #007bff;
+}
+.clear-button {
+  padding: 5px 10px;
+  font-size: 14px;
+  color: #007bff;
+  background-color: transparent;
+  border: 2px solid #007bff;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.clear-button:hover {
+  background-color: #e6f7ff;
+}
 p {
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 10px;
 }
-
 /* Media queries for responsiveness */
 @media (max-width: 768px) {
   .row {
     flex-direction: column;
   }
-
   .column {
     width: 100%;
   }
