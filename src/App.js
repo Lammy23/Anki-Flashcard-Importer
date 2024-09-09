@@ -1,4 +1,3 @@
-// src/App.js
 import { useState } from "react";
 import { createModel, createDeck } from "./apiService";
 import "./App.css";
@@ -7,10 +6,29 @@ function App() {
   const [model, setModel] = useState("");
   const [deck, setDeck] = useState("");
   const [parentDeck, setParentDeck] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const clearFields = () => {
     setModel("");
     setDeck("");
+    setSuccessMessage(""); // Clear the success message when fields are cleared
+  };
+
+  const handleUpload = () => {
+    setSuccessMessage(""); // Clear any previous success message
+    createModel(model)
+      .then(({ modelName, inOrderFields }) => {
+        return createDeck(deck, modelName, inOrderFields, parentDeck);
+      })
+      .then(() => {
+        setSuccessMessage("Model and Deck created successfully!");
+        setTimeout(() => {
+          setSuccessMessage(""); // Clear the success message after 5 seconds
+        }, 5000);
+      })
+      .catch((error) => {
+        console.error("Error creating model or deck:", error);
+      });
   };
 
   return (
@@ -39,8 +57,8 @@ function App() {
         </div>
       </div>
       <button className="clear-button" onClick={clearFields}>
-          Clear
-        </button>
+        Clear
+      </button>
       <div className="column">
         <p>Parent Deck</p>
         <input
@@ -51,16 +69,11 @@ function App() {
         />
       </div>
       <div className="row">
-        <button
-          className="upload-button"
-          onClick={() => {
-            const { modelName, inOrderFields } = createModel(model);
-            createDeck(deck, modelName, inOrderFields, parentDeck);
-          }}
-        >
+        <button className="upload-button" onClick={handleUpload}>
           Upload
         </button>
       </div>
+      {successMessage && <div className="success-message">{successMessage}</div>}
     </div>
   );
 }
