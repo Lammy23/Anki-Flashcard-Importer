@@ -7,16 +7,32 @@ function invoke(action, version, params = {}) {
     method: "POST",
     body: JSON.stringify({ action, version, params }),
     headers: { "Content-Type": "application/json" },
-  }).then((res) => res.json());
+  })
+    .then((res) => res.json())
+    .then((response) => {
+      console.log(`Response for action ${action}:`, response);
+      if (response.error) {
+        throw new Error(response.error);
+      }
+      return response;
+    });
 }
 
-function createModel(fileContent) {
+function sync() {
+  return invoke("sync", VERSION);
+}
+
+function createModel(fileContent, modelType) {
   return new Promise((resolve, reject) => {
     const lines = fileContent.split("\n");
     let result = {
       modelName: "",
       inOrderFields: [],
-      css: ".card {font-family:open sans;font-size:30px;text-align:center;color:black;background-color:white;}\n.extra {font-size:15px;}\nstrong {color:lightblue;}",
+      css:
+        modelType === "model-c"
+          ? ".card {font-family:open sans;font-size:20px;text-align: center;color: black;background-color: white;}.cloze {font-weight:bold;color:blue;}.nightMode .cloze {color:lightblue;}"
+          : ".card {font-family:open sans;font-size:30px;text-align:center;color:black;background-color:white;}\n.extra {font-size:15px;}\nstrong {color:lightblue;}",
+      isCloze: modelType === "model-c",
       cardTemplates: [],
     };
 
@@ -72,7 +88,12 @@ function createModel(fileContent) {
     console.log("cardTemplates", result.cardTemplates);
 
     invoke("createModel", VERSION, result)
-      .then(() => resolve({ modelName: result.modelName, inOrderFields: result.inOrderFields }))
+      .then(() =>
+        resolve({
+          modelName: result.modelName,
+          inOrderFields: result.inOrderFields,
+        })
+      )
       .catch(reject);
   });
 }
@@ -92,8 +113,6 @@ function createDeck(fileContent, modelName, inOrderFields, parentDeck) {
           return !(line[0] === "#") && line.length > 0;
         });
 
-        console.log("lines", lines);
-
         lines = lines.map((line) => {
           var newLine = line.trim();
           newLine = newLine.split("\t").filter((word, index) => {
@@ -102,8 +121,6 @@ function createDeck(fileContent, modelName, inOrderFields, parentDeck) {
           return newLine;
         });
 
-        console.log("lines", lines);
-
         lines.forEach((line) => {
           // line[0], line[1], line[2], ...
           const note = {
@@ -111,7 +128,6 @@ function createDeck(fileContent, modelName, inOrderFields, parentDeck) {
             modelName: modelName,
           };
           var fields = inOrderFields.reduce((accumulator, key, index) => {
-            // console.log(accumulator)
             accumulator[key] = line[index];
             return accumulator;
           }, {});
@@ -129,4 +145,4 @@ function createDeck(fileContent, modelName, inOrderFields, parentDeck) {
   });
 }
 
-export { createModel, createDeck };
+export { createModel, createDeck, sync };
