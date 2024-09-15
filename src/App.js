@@ -6,18 +6,10 @@ import {
   sync,
 } from "./apiService";
 import Header from "./components/Header";
+import { MODES, ModeSelector } from "./components/ModeSelector";
+import { MODEL_TYPES, ModelForm } from "./components/ModelForm";
+import DeckForm from "./components/DeckForm";
 import "./App.css";
-
-const MODES = {
-  MODEL_AND_DECK: "modelAndDeck",
-  MODEL_ONLY: "modelOnly",
-  DECK_ONLY: "deckOnly",
-};
-
-const MODEL_TYPES = {
-  MODEL_A: "model-a",
-  MODEL_C: "model-c",
-};
 
 function App() {
   const [formState, setFormState] = useState({
@@ -29,8 +21,11 @@ function App() {
     mode: MODES.MODEL_AND_DECK,
   });
 
-  const [message, setMessage] = useState({ success: "", error: "" });
-
+  const [message, setMessage] = useState({
+    success: "",
+    error: "",
+    synced: "",
+  });
   const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
     setFormState((prev) => ({ ...prev, [name]: value }));
@@ -42,14 +37,37 @@ function App() {
       model: "",
       deck: "",
       modelName: "",
+      deckToDelete: "",
     }));
-    setMessage({ success: "", error: "" });
+    setMessage({ success: "", error: "", synced: "" });
+  }, []);
+
+  const handleSync = useCallback(() => {
+    setMessage((prev) => ({ ...prev, synced: "Syncing..." }));
+    sync()
+      .then(() =>
+        setMessage((prev) => ({ ...prev, synced: "Synced successfully" }))
+      )
+      .catch((error) =>
+        setMessage((prev) => ({
+          ...prev,
+          error: `Sync error: ${error.message}`,
+          synced: "",
+        }))
+      );
   }, []);
 
   const handleUpload = useCallback(() => {
-    setMessage({ success: "", error: "" });
+    setMessage({ success: "", error: "", synced: "" });
 
-    const { mode, model, modelType, deck, parentDeck, modelName } = formState;
+    const {
+      mode,
+      model,
+      modelType,
+      deck,
+      parentDeck,
+      modelName,
+    } = formState;
 
     const operations = {
       [MODES.MODEL_ONLY]: () => createModel(model, modelType),
@@ -61,103 +79,51 @@ function App() {
     };
 
     operations[mode]()
-      .then(() => {
-        setMessage({ success: "Operation completed successfully!", error: "" });
-        sync(); // Uncommented the sync function
+      .then((result) => {
+        setMessage({
+          success: result || "Operation completed successfully!",
+          error: "",
+          synced: "",
+        });
       })
       .catch((error) => {
-        setMessage({ success: "", error: `Error: ${error.message}` });
+        setMessage({
+          success: "",
+          error: `Error: ${error.message}`,
+          synced: "",
+        });
         console.error("Error:", error);
       });
   }, [formState]);
 
   return (
     <div className="app">
-      <Header /> {/* Add this line to render the Header component */}
+      <Header />
+      <div className="sync-button-container">
+        <button className="sync-button" onClick={handleSync}>
+          Sync
+        </button>
+      </div>
       <div className="row">
-        <div className="column">
-          <p>Mode</p>
-          <select
-            className="mode-dropdown"
-            name="mode"
-            value={formState.mode}
-            onChange={handleInputChange}
-          >
-            <option value={MODES.MODEL_AND_DECK}>Model & Deck</option>
-            <option value={MODES.MODEL_ONLY}>Model Only</option>
-            <option value={MODES.DECK_ONLY}>Deck Only</option>
-          </select>
-        </div>
+        <ModeSelector mode={formState.mode} onChange={handleInputChange} />
       </div>
       {(formState.mode === MODES.MODEL_AND_DECK ||
         formState.mode === MODES.MODEL_ONLY) && (
-        <div className="row">
-          <div className="column">
-            <p>Model</p>
-            <textarea
-              name="model"
-              rows="10"
-              cols="60"
-              value={formState.model}
-              onChange={handleInputChange}
-            />
-          </div>
-        </div>
+        <ModelForm
+          model={formState.model}
+          modelType={formState.modelType}
+          onChange={handleInputChange}
+        />
       )}
       {(formState.mode === MODES.MODEL_AND_DECK ||
         formState.mode === MODES.DECK_ONLY) && (
-        <div className="row">
-          <div className="column">
-            <p>Deck</p>
-            <textarea
-              name="deck"
-              rows="10"
-              cols="60"
-              value={formState.deck}
-              onChange={handleInputChange}
-            />
-          </div>
-        </div>
-      )}
-      {(formState.mode === MODES.MODEL_AND_DECK ||
-        formState.mode === MODES.DECK_ONLY) && (
-        <div className="column">
-          <p>Parent Deck</p>
-          <input
-            name="parentDeck"
-            type="text"
-            placeholder="deck 1::deck 2:: ..."
-            value={formState.parentDeck}
-            onChange={handleInputChange}
-          />
-        </div>
-      )}
-      {(formState.mode === MODES.MODEL_AND_DECK ||
-        formState.mode === MODES.MODEL_ONLY) && (
-        <div className="column">
-          <p>Model Type</p>
-          <select
-            className="model-type-dropdown"
-            name="modelType"
-            value={formState.modelType}
-            onChange={handleInputChange}
-          >
-            <option value={MODEL_TYPES.MODEL_A}>Model A</option>
-            <option value={MODEL_TYPES.MODEL_C}>Model C</option>
-          </select>
-        </div>
-      )}
-      {formState.mode === MODES.DECK_ONLY && (
-        <div className="column">
-          <p>Model & Deck Name (Required)</p>
-          <input
-            name="modelName"
-            type="text"
-            placeholder="Enter model & deck name"
-            value={formState.modelName}
-            onChange={handleInputChange}
-          />
-        </div>
+        <DeckForm
+          deck={formState.deck}
+          parentDeck={formState.parentDeck}
+          modelName={formState.modelName}
+          onChange={handleInputChange}
+          isDeckOnly={formState.mode === MODES.DECK_ONLY}
+        />
       )}
       <div className="row">
         <button className="upload-button" onClick={handleUpload}>
@@ -171,6 +137,7 @@ function App() {
         <div className="success-message">{message.success}</div>
       )}
       {message.error && <div className="error-message">{message.error}</div>}
+      {message.synced && <div className="synced-message">{message.synced}</div>}
     </div>
   );
 }

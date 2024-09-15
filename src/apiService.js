@@ -361,10 +361,16 @@ function createDeckAndAddNotes(
   });
 }
 
+// New function to fetch all decks
+function getAllDecks() {
+  return invoke("deckNames", VERSION).then((response) => response.result);
+}
+
 export {
   createModel,
   createDeckAndAddNotes,
   addNotesOnly,
   sync,
   getModelFieldNames,
+  getAllDecks,
 };
