@@ -276,7 +276,7 @@ function addNotesOnly(fileContent, parentDeck, modelName) {
 
           lines = lines.map((line) => {
             var newLine = line.trim();
-            newLine = newLine.split("\t").filter((word, index) => {
+            newLine = newLine.split("    ").filter((word, index) => {
               return index > 1;
             });
             return newLine;
@@ -331,13 +331,16 @@ function createDeckAndAddNotes(
 
         lines = lines.map((line) => {
           var newLine = line.trim();
-          newLine = newLine.split("\t").filter((word, index) => {
+          newLine = newLine.split("    ").filter((word, index) => {
             return index > 1;
           });
           return newLine;
         });
 
+        console.log("lines", lines);
+
         lines.forEach((line) => {
+          console.log("line", line);
           // line[0], line[1], line[2], ...
           const note = {
             deckName: deckName,
@@ -351,7 +354,7 @@ function createDeckAndAddNotes(
           result.push(note);
         });
         //DEBUG
-        console.log("result", result);
+        // console.log("result", result);
 
         invoke("addNotes", VERSION, { notes: result })
           .then(resolve)

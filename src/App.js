@@ -81,7 +81,7 @@ function App() {
     operations[mode]()
       .then((result) => {
         setMessage({
-          success: result || "Operation completed successfully!",
+          success: result.error ? JSON.stringify(result.error) : "Operation completed successfully!",
           error: "",
           synced: "",
         });
@@ -89,10 +89,10 @@ function App() {
       .catch((error) => {
         setMessage({
           success: "",
-          error: `Error: ${error.message}`,
+          error: `Error: ${JSON.stringify(error.message)}`,
           synced: "",
         });
-        console.error("Error:", error);
+        console.error("Error:", JSON.stringify(error));
       });
   }, [formState]);
 
@@ -136,8 +136,8 @@ function App() {
       {message.success && (
         <div className="success-message">{message.success}</div>
       )}
-      {message.error && <div className="error-message">{message.error}</div>}
-      {message.synced && <div className="synced-message">{message.synced}</div>}
+      {message.error && <div className="error-message">{JSON.stringify(message.error)}</div>}
+      {message.synced && <div className="synced-message">{JSON.stringify(message.synced)}</div>}
     </div>
   );
 }
