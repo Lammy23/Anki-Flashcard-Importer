@@ -1,6 +1,6 @@
 # Anki Importer
 
-A React-based web application for efficiently importing customized flashcards into Anki. This tool specializes in handling cloze deletions and supports LaTeX math formatting, code snippets, and HTML formatting.
+A React-based web application for efficiently importing customized flashcards into Anki. This tool specializes in handling cloze deletions and supports LaTeX math formatting, code snippets, and HTML formatting. Supports 'Basic' (MODEL-A) note type with one or more card types as well as 'Cloze' (MODEL-C) note type. 
 
 %% TODO: Insert Preview Here %%
 
@@ -88,7 +88,7 @@ Card [Number]:
 	---
 ```
 
-For 'Basic' Cards with one or more card types.
+For 'Basic' Notes with one or more card types.
 
 ### Deck-A Format (INPUT)
 ```
@@ -116,6 +116,7 @@ Back Template:
 {{Field2Name}}
 ---
 ```
+For 'Cloze' Notes.
 
 ### Deck-C Format (INPUT)
 ```
