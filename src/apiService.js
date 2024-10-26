@@ -270,16 +270,16 @@ function addNotesOnly(fileContent, parentDeck, modelName) {
         return new Promise((resolve, reject) => {
           const result = [];
           var lines = fileContent.split("\n");
+          // figure out separator
+          const separator = lines[0].split("separator:")[1].trim();
+
           lines = lines.filter((line) => {
             return !(line[0] === "#") && line.length > 0;
           });
 
           lines = lines.map((line) => {
             var newLine = line.trim();
-            if (newLine.search("\t") !== -1) {
-              newLine = newLine.replaceAll("\t", "    ");
-            }
-            newLine = newLine.split("    ").filter((word, index) => {
+            newLine = newLine.split(separator).filter((word, index) => {
               return index > 1;
             });
             return newLine;
@@ -327,16 +327,16 @@ function createDeckAndAddNotes(
       .then(() => {
         const result = [];
         var lines = fileContent.split("\n");
+        // figure out separator
+        const separator = lines[0].split("separator:")[1].trim();
         lines = lines.filter((line) => {
           return !(line[0] === "#") && line.length > 0;
         });
 
         lines = lines.map((line) => {
           var newLine = line.trim();
-          if (newLine.search("\t") !== -1) {
-            newLine = newLine.replaceAll("\t", "    ");
-          }
-          newLine = newLine.split("    ").filter((word, index) => {
+
+          newLine = newLine.split(separator).filter((word, index) => {
             return index > 1;
           });
           return newLine;
