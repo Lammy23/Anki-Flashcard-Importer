@@ -11,12 +11,6 @@ A React-based web application for efficiently importing customized flashcards in
   - Model Only: Create just the note type template
   - Deck Only: Add cards to existing note types
 
-- **Rich Formatting Support**
-  - LaTeX for mathematical expressions
-  - Code blocks with syntax highlighting
-  - HTML formatting
-  - Custom styling for code and math content
-
 - **Anki Integration**
   - Direct sync with Anki using AnkiConnect
   - Bulk import support
