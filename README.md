@@ -213,8 +213,6 @@ For 'Cloze' Notes.
 	}
 ```
 This is optional styling you can use in your Anki program. The advantage of this styling structure is the code element, code-block class and strong class I created.
-![image](https://github.com/user-attachments/assets/e8596dcf-579a-4b24-a05d-4bd9c2fe2f73)
-An example of the code element
 
 ## Important Rules for LLM
 You can give the LLM you decide to use these rules:
