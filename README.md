@@ -2,7 +2,7 @@
 
 A React-based web application for efficiently importing customized flashcards into Anki. This tool specializes in handling cloze deletions and supports LaTeX math formatting, code snippets, and HTML formatting.
 
-![Preview of Anki Importer](https://placeholder-for-screenshot.png)
+%% TODO: Insert Preview Here %%
 
 ## Features
 
@@ -58,9 +58,56 @@ npm start
 4. Enter your deck content with proper separators
 5. Click "Upload" to create both model and deck
 
-### Model Format
+
+## Model and Deck Formats
+
+### Model-A Format (INPUT)
 ```
-Note Type: [Name]-Cloze
+Note Type: [NoteName]
+Field 1: [Field1Name]
+Field 2: [Field2Name]
+Field 3: [Field3Name]
+
+Card [Number]: 
+	Front Template:
+	---
+	<p class='extra'>[Supplementary text 1]</p>
+	{{[Field 1 Name]}}
+	---
+	Back Template:
+	---
+	{{FrontSide}} 
+	<hr id=answer> 
+	{{[Field 2 Name]}} 
+	---
+Card [Number]: 
+	Front Template:
+	---
+	<p class='extra'>[Supplementary text 2]</p>
+	{{[Field 2 Name]}}
+	---
+	Back Template:
+	---
+	{{FrontSide}} 
+	<hr id=answer> 
+	{{[Field 3 Name]}} 
+	---
+```
+
+For 'Basic' Cards with one or more card types.
+
+### Deck-A Format (INPUT)
+```
+#separator:|||SEPARATOR|||
+#html:true
+#notetype column:1
+#deck column:2
+[NoteName]|||SEPARATOR|||[DeckName]|||SEPARATOR|||[Field1Content]|||SEPARATOR|||[Field2Content]|||SEPARATOR|||[Field3Content]
+```
+
+### Model-C Format (INPUT)
+```
+Note Type: [NoteName]
 Field 1: [Field1Name]
 Field 2: [Field2Name]
 
@@ -76,7 +123,7 @@ Back Template:
 ---
 ```
 
-### Deck Format
+### Deck-C Format (INPUT)
 ```
 #separator:|||SEPARATOR|||
 #html:true
@@ -85,12 +132,102 @@ Back Template:
 [NoteName]|||SEPARATOR|||[DeckName]|||SEPARATOR|||[Field1Content]|||SEPARATOR|||[Field2Content]
 ```
 
-## Important Rules
+`|||SEPARATOR|||` used as the separator instead of the default `#` to prevent clashes with code or other specific content.
+
+### Styling Format (NOT INPUT)
+```
+	@font-face {
+	  font-family: 'Open Sans';
+	  src: url('_OpenSans-Regular.ttf') format('truetype');
+	  font-weight: normal;
+	  font-style: normal;
+	}
+
+	@font-face {
+	  font-family: 'Open Sans';
+	  src: url('_OpenSans-Bold.ttf') format('truetype');
+	  font-weight: bold;
+	  font-style: normal;
+	}
+
+	@font-face {
+	  font-family: 'Fira Code';
+	  src: url('_FiraCode-Regular.ttf');
+	}
+
+	.card {
+	  font-family: 'Open Sans', sans-serif;
+	  font-size: 20px;
+	  text-align: center;
+	  color: black;
+	  background-color: white;
+	}
+
+	.extra {
+	  font-size: 15px;
+	}
+
+	strong {
+	  color: lightblue;
+	}
+
+	code {
+	  font-family: 'Fira Code', monospace;
+	  background-color: #424242;
+	  padding: 2px;
+	  border-radius: 3px;
+	}
+
+	.code-block {
+	  font-family: 'Fira Code', monospace;
+	  display: block;
+	  text-align: left;
+	  background-color: #424242;
+	  padding: 20px;
+	  border-radius: 5px;
+	  overflow-x: auto;
+	  overflow-y: auto;
+	  white-space: pre;
+	  max-width: 1200px;
+	  max-height: 600px;
+	  margin: 10px auto;
+	}
+
+	.cloze {
+	  font-weight: bold;
+	  color: blue;
+	}
+
+	.nightMode .cloze {
+	  color: lightblue;
+	}
+
+	@media (max-width: 768px) {
+	  .code-block {
+		padding: 10px;
+		max-height: 650px;
+	  }
+	}
+
+	@media (max-width: 480px) {
+	  .code-block {
+		padding: 8px;
+		max-height: 500px;
+		font-size: 14px;
+	  }
+	}
+```
+This is optional styling you can use in your Anki program. The advantage of this styling structure is the code element, code-block class and strong class I created.
+![image](https://github.com/user-attachments/assets/e8596dcf-579a-4b24-a05d-4bd9c2fe2f73)
+An example of the code element
+
+## Important Rules for LLM
+You can give the LLM you decide to use these rules:
 
 1. Deck and Note Type names must match and end with 'Cloze'
 2. No duplicate content in Field 1
 3. Use `<br>` for line breaks (not raw newlines)
-4. Place cloze deletions only in Field 1
+4. (For Model-C) Place cloze deletions only in Field 1
 5. Use web URLs for images
 6. Enclose LaTeX in `\(` and `\)`
 
@@ -112,11 +249,7 @@ src/
 
 ## Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+%% TODO: Add details here %%
 
 ## License
 
@@ -126,4 +259,3 @@ This project is licensed under the MIT License - see the LICENSE.md file for det
 
 - Built with [React](https://reactjs.org/)
 - Integrates with [AnkiConnect](https://foosoft.net/projects/anki-connect/)
-- Uses [Create React App](https://create-react-app.dev/)
