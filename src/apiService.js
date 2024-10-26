@@ -22,6 +22,15 @@ function sync() {
   return invoke("sync", VERSION);
 }
 
+function getModelFieldNames(modelName) {
+  console.log(modelName);
+  return new Promise((resolve, reject) => {
+    invoke("modelFieldNames", VERSION, { modelName })
+      .then((response) => resolve(response.result))
+      .catch(reject);
+  });
+}
+
 function createModel(fileContent, modelType) {
   return new Promise((resolve, reject) => {
     const lines = fileContent.split("\n");
@@ -30,8 +39,157 @@ function createModel(fileContent, modelType) {
       inOrderFields: [],
       css:
         modelType === "model-c"
-          ? ".card {font-family:open sans;font-size:20px;text-align: center;color: black;background-color: white;}.cloze {font-weight:bold;color:blue;}.nightMode .cloze {color:lightblue;}"
-          : ".card {font-family:open sans;font-size:30px;text-align:center;color:black;background-color:white;}\n.extra {font-size:15px;}\nstrong {color:lightblue;}",
+          ? `@font-face {
+              font-family: 'Open Sans';
+              src: url('_OpenSans-Regular.ttf') format('truetype');
+              font-weight: normal;
+              font-style: normal;
+            }
+
+            @font-face {
+              font-family: 'Open Sans';
+              src: url('_OpenSans-Bold.ttf') format('truetype');
+              font-weight: bold;
+              font-style: normal;
+            }
+
+            @font-face {
+              font-family: 'Fira Code';
+              src: url('_FiraCode-Regular.ttf');
+            }
+
+            .card {
+              font-family: 'Open Sans', sans-serif;
+              font-size: 20px;
+              text-align: center;
+              color: black;
+              background-color: white;
+            }
+
+            .extra {
+              font-size: 15px;
+            }
+
+            strong {
+              color: lightblue;
+            }
+
+            code {
+              font-family: 'Fira Code', monospace;
+              background-color: #424242;
+              padding: 2px;
+              border-radius: 3px;
+            }
+
+            .code-block {
+              font-family: 'Fira Code', monospace;
+              display: block;
+              text-align: left;
+              background-color: #424242;
+              padding: 20px;
+              border-radius: 5px;
+              overflow-x: auto;
+              overflow-y: auto;
+              white-space: pre;
+              max-width: 1200px;
+              max-height: 600px;
+              margin: 10px auto;
+            }
+
+            .cloze {
+              font-weight: bold;
+              color: blue;
+            }
+
+            .nightMode .cloze {
+              color: lightblue;
+            }
+
+            @media (max-width: 768px) {
+              .code-block {
+                padding: 10px;
+                max-height: 650px;
+              }
+            }
+
+            @media (max-width: 480px) {
+              .code-block {
+                padding: 8px;
+                max-height: 500px;
+                font-size: 14px;
+              }
+            }`
+          : `@font-face {
+              font-family: 'Open Sans';
+              src: url('_OpenSans-Regular.ttf') format('truetype');
+              font-weight: normal;
+              font-style: normal;
+            }
+
+            @font-face {
+              font-family: 'Open Sans';
+              src: url('_OpenSans-Bold.ttf') format('truetype');
+              font-weight: bold;
+              font-style: normal;
+            }
+
+            @font-face {
+              font-family: 'Fira Code';
+              src: url('_FiraCode-Regular.ttf');
+            }
+
+            .card {
+              font-family: 'Open Sans', sans-serif;
+              font-size: 30px;
+              text-align: center;
+              color: black;
+              background-color: white;
+            }
+
+            .extra {
+              font-size: 15px;
+            }
+
+            strong {
+              color: lightblue;
+            }
+
+            code {
+              font-family: 'Fira Code', monospace;
+              background-color: #424242;
+              padding: 2px;
+              border-radius: 3px;
+            }
+
+            .code-block {
+              font-family: 'Fira Code', monospace;
+              display: block;
+              text-align: left;
+              background-color: #424242;
+              padding: 20px;
+              border-radius: 5px;
+              overflow-x: auto;
+              overflow-y: auto;
+              white-space: pre;
+              max-width: 1200px;
+              max-height: 600px;
+              margin: 10px auto;
+            }
+
+            @media (max-width: 768px) {
+              .code-block {
+                padding: 10px;
+                max-height: 650px;
+              }
+            }
+
+            @media (max-width: 480px) {
+              .code-block {
+                padding: 8px;
+                max-height: 500px;
+                font-size: 14px;
+              }
+            }`,
       isCloze: modelType === "model-c",
       cardTemplates: [],
     };
@@ -61,7 +219,7 @@ function createModel(fileContent, modelType) {
       } else if (line === "Back Template:") {
         currentCard.Back = "";
         frontInProgress = false;
-      } else if (currentCard && line !== "```") {
+      } else if (currentCard && line !== "---") {
         if (frontInProgress) {
           currentCard.Front += line + "\n";
         } else {
@@ -82,10 +240,10 @@ function createModel(fileContent, modelType) {
     }));
 
     //DEBUG
-    console.log("modelName", result.modelName);
-    console.log("inOrderFields", result.inOrderFields);
-    console.log("css", result.css);
-    console.log("cardTemplates", result.cardTemplates);
+    // console.log("modelName", result.modelName);
+    // console.log("inOrderFields", result.inOrderFields);
+    // console.log("css", result.css);
+    // console.log("cardTemplates", result.cardTemplates);
 
     invoke("createModel", VERSION, result)
       .then(() =>
@@ -98,7 +256,68 @@ function createModel(fileContent, modelType) {
   });
 }
 
-function createDeck(fileContent, modelName, inOrderFields, parentDeck) {
+function addNotesOnly(fileContent, parentDeck, modelName) {
+  return new Promise((resolve, reject) => {
+    var deckName;
+    if (!parentDeck) {
+      deckName = modelName;
+    } else {
+      deckName = `${parentDeck}::${modelName}`;
+    }
+    getModelFieldNames(modelName)
+      .then((inOrderFields) => {
+        console.log("inOrderFields", inOrderFields);
+        return new Promise((resolve, reject) => {
+          const result = [];
+          var lines = fileContent.split("\n");
+          // figure out separator
+          const separator = lines[0].split("separator:")[1].trim();
+
+          lines = lines.filter((line) => {
+            return !(line[0] === "#") && line.length > 0;
+          });
+
+          lines = lines.map((line) => {
+            var newLine = line.trim();
+            newLine = newLine.split(separator).filter((word, index) => {
+              return index > 1;
+            });
+            return newLine;
+          });
+
+          lines.forEach((line) => {
+            // line[0], line[1], line[2], ...
+            const note = {
+              deckName: deckName,
+              modelName: modelName,
+            };
+            var fields = inOrderFields.reduce((accumulator, key, index) => {
+              accumulator[key] = line[index];
+              return accumulator;
+            }, {});
+            note.fields = fields;
+            result.push(note);
+          });
+          //DEBUG
+          console.log("result", result);
+
+          invoke("addNotes", VERSION, { notes: result })
+            .then(resolve)
+            .catch(reject);
+        });
+      })
+      .then(resolve)
+      .catch(reject);
+  });
+}
+
+function createDeckAndAddNotes(
+  fileContent,
+  modelName,
+  inOrderFields,
+  parentDeck
+) {
+  console.log("inOrderFields", inOrderFields);
   return new Promise((resolve, reject) => {
     var deckName = modelName;
     if (parentDeck) {
@@ -108,18 +327,22 @@ function createDeck(fileContent, modelName, inOrderFields, parentDeck) {
       .then(() => {
         const result = [];
         var lines = fileContent.split("\n");
+        // figure out separator
+        const separator = lines[0].split("separator:")[1].trim();
         lines = lines.filter((line) => {
-          console.log(line[0]);
           return !(line[0] === "#") && line.length > 0;
         });
 
         lines = lines.map((line) => {
           var newLine = line.trim();
-          newLine = newLine.split("\t").filter((word, index) => {
+
+          newLine = newLine.split(separator).filter((word, index) => {
             return index > 1;
           });
           return newLine;
         });
+
+        console.log("lines", lines);
 
         lines.forEach((line) => {
           // line[0], line[1], line[2], ...
@@ -145,4 +368,16 @@ function createDeck(fileContent, modelName, inOrderFields, parentDeck) {
   });
 }
 
-export { createModel, createDeck, sync };
+// New function to fetch all decks
+function getAllDecks() {
+  return invoke("deckNames", VERSION).then((response) => response.result);
+}
+
+export {
+  createModel,
+  createDeckAndAddNotes,
+  addNotesOnly,
+  sync,
+  getModelFieldNames,
+  getAllDecks,
+};
