@@ -9,6 +9,8 @@ import Header from "./components/Header";
 import { MODES, ModeSelector } from "./components/ModeSelector";
 import { MODEL_TYPES, ModelForm } from "./components/ModelForm";
 import DeckForm from "./components/DeckForm";
+import InstructionsPanel from "./components/InstructionsPanel";
+
 import "./App.css";
 
 function App() {
@@ -60,14 +62,7 @@ function App() {
   const handleUpload = useCallback(() => {
     setMessage({ success: "", error: "", synced: "" });
 
-    const {
-      mode,
-      model,
-      modelType,
-      deck,
-      parentDeck,
-      modelName,
-    } = formState;
+    const { mode, model, modelType, deck, parentDeck, modelName } = formState;
 
     const operations = {
       [MODES.MODEL_ONLY]: () => createModel(model, modelType),
@@ -81,7 +76,9 @@ function App() {
     operations[mode]()
       .then((result) => {
         setMessage({
-          success: result.error ? JSON.stringify(result.error) : "Operation completed successfully!",
+          success: result.error
+            ? JSON.stringify(result.error)
+            : "Operation completed successfully!",
           error: "",
           synced: "",
         });
@@ -104,6 +101,7 @@ function App() {
           Sync
         </button>
       </div>
+      {/*<InstructionsPanel />*/}
       <div className="row">
         <ModeSelector mode={formState.mode} onChange={handleInputChange} />
       </div>
@@ -136,8 +134,12 @@ function App() {
       {message.success && (
         <div className="success-message">{message.success}</div>
       )}
-      {message.error && <div className="error-message">{JSON.stringify(message.error)}</div>}
-      {message.synced && <div className="synced-message">{JSON.stringify(message.synced)}</div>}
+      {message.error && (
+        <div className="error-message">{JSON.stringify(message.error)}</div>
+      )}
+      {message.synced && (
+        <div className="synced-message">{JSON.stringify(message.synced)}</div>
+      )}
     </div>
   );
 }
