@@ -4,6 +4,28 @@ A React-based web application for efficiently importing customized flashcards in
 
 %% TODO: Insert Preview Here %%
 
+## What is Anki?
+
+Anki is a powerful, open-source flashcard program that uses spaced repetition to optimize learning. Unlike traditional flashcards, Anki intelligently schedules review times based on how well you know each card, showing you harder cards more frequently and easier cards less often. It supports various content types including text, images, LaTeX math equations, and code snippets.
+
+## Why I Made This
+
+As a student, I noticed that creating effective study materials often takes up more time than actual studying. The process typically involves:
+1. Creating comprehensive cheat sheets or study notes
+2. Converting these notes into flashcards
+3. Formatting and importing them into Anki
+4. Setting up proper card templates and styling
+
+This process is time-consuming and repetitive. Anki Importer solves this by:
+- Working seamlessly with AI language models to generate properly formatted note types and decks
+- Providing direct import functionality into Anki
+- Supporting rich formatting including code blocks, LaTeX, and HTML
+- Eliminating the need for manual card creation and formatting
+
+By automating these steps, students can focus on what matters most - actually studying the material rather than spending hours formatting and importing it.
+
+%% TODO: Insert Preview Here %%
+
 ## Features
 
 - **Multiple Import Modes**
