@@ -64,7 +64,7 @@ npm start
 
 4. Make sure Anki is running and AnkiConnect is properly installed
 
-## Usage
+## Usage (TODO: Complete this)
 
 ### Creating a New Model and Deck
 
