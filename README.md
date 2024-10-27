@@ -17,7 +17,7 @@ As a student, I noticed that creating effective study materials often takes up m
 4. Setting up proper card templates and styling
 
 This process is time-consuming and repetitive. Anki Importer solves this by:
-- Working seamlessly with AI language models to generate properly formatted note types and decks
+- Working with AI language models to generate properly formatted note types and decks
 - Providing direct import functionality into Anki
 - Supporting rich formatting including code blocks, LaTeX, and HTML
 - Eliminating the need for manual card creation and formatting
